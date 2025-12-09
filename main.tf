@@ -5,6 +5,9 @@ variable subnet_cidr_block{}
 variable avail_zone{}
 variable env_prefix {}
 variable my_ip {}
+  
+
+
 resource "aws_vpc" "myapp-vpc" {
   cidr_block = var.vpc_cidr_block
 
@@ -72,4 +75,40 @@ resource "aws_security_group" "myapp-sg" {
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
+  tags = {
+    Name = "${var.env_prefix}-sg"
+  }
 }
+
+data "aws_ami" "latest_amazon_linux" {
+  most_recent = true
+
+  filter {
+    name   = "name"
+    values = ["amzn2-ami-hvm-*-x86_64-gp2"]
+  }
+
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
+
+  owners = ["137112412989"] # Amazon
+  
+}
+output "aws_ami_id" {
+  value = data.aws_ami.latest_amazon_linux.id
+  
+}
+
+/*resource "aws_instance" "myapp-server" {
+  ami           = var.ami
+  instance_type = "t2.micro"
+  subnet_id     = aws_subnet.myapp-subnet-1.id
+  security_groups = [aws_security_group.myapp-sg.name]
+
+  tags = {
+    Name = "${var.env_prefix}-instance"
+  }
+  
+}*/
