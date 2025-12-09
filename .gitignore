@@ -1,0 +1,13 @@
+# local .terraform dir
+.terraform/*
+
+# .tfstate files
+*.tfstate
+*.tfstate.backup
+*.tfstate.*
+
+# variables override files
+*.tfvars
+override.tf
+override.tf.json
+*_override.tf
