@@ -5,7 +5,7 @@ variable subnet_cidr_block{}
 variable avail_zone{}
 variable env_prefix {}
 variable my_ip {}
-  
+/*variable public_key_location {}  */
 
 
 resource "aws_vpc" "myapp-vpc" {
@@ -101,14 +101,24 @@ output "aws_ami_id" {
   
 }
 
-/*resource "aws_instance" "myapp-server" {
-  ami           = var.ami
-  instance_type = "t2.micro"
+/*resource "aws_key_pair" "ssh" {
+  key_name   = "dev-key"
+  public_key = var.public_key_location
+}*/
+  
+
+
+resource "aws_instance" "myapp-server" {
+  ami           = data.aws_ami.latest_amazon_linux.id
+  instance_type = "t3.micro"
   subnet_id     = aws_subnet.myapp-subnet-1.id
-  security_groups = [aws_security_group.myapp-sg.name]
+  security_groups = [aws_security_group.myapp-sg.id]
+  availability_zone = var.avail_zone
+
+  associate_public_ip_address = true
+  key_name   = "devops-key"
 
   tags = {
-    Name = "${var.env_prefix}-instance"
-  }
-  
-}*/
+    Name = "${var.env_prefix}-server"
+  } 
+}
