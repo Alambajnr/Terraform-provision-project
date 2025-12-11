@@ -1,11 +1,6 @@
-provider "aws" {}
-
-variable vpc_cidr_block{}
-variable subnet_cidr_block{}
-variable avail_zone{}
-variable env_prefix {}
-variable my_ip {}
-/*variable public_key_location {}  */
+provider "aws" {
+  region = "us-east-1"
+}
 
 
 resource "aws_vpc" "myapp-vpc" {
@@ -16,39 +11,15 @@ resource "aws_vpc" "myapp-vpc" {
   }
 }
 
-resource "aws_subnet" "myapp-subnet-1" {
-  vpc_id            = aws_vpc.myapp-vpc.id
-  cidr_block       = var.subnet_cidr_block
-  availability_zone = var.avail_zone
 
-  tags = {
-    Name = "${var.env_prefix}-subnet-1"
-  }
-}
-resource "aws_internet_gateway" "myapp-igw" {
+module "myapp-subnet" {
+  source = "./modules/subnet"
   vpc_id = aws_vpc.myapp-vpc.id
-
-  tags = {
-    Name = "${var.env_prefix}-igw"
-  }
+  subnet_cidr_block = var.subnet_cidr_block
+  avail_zone = var.avail_zone
+  env_prefix = var.env_prefix
 }
 
-resource "aws_route_table" "myapp-route-table" {
-  vpc_id = aws_vpc.myapp-vpc.id
-
-  route {
-    cidr_block = "0.0.0.0/0"
-    gateway_id = aws_internet_gateway.myapp-igw.id
-  }
-  tags = {
-    Name = "${var.env_prefix}-route-table"
-  }  
-}
-
-resource "aws_route_table_association" "myapp-rtb-assoc-1" {
-  subnet_id      = aws_subnet.myapp-subnet-1.id
-  route_table_id = aws_route_table.myapp-route-table.id
-}
 
 resource "aws_security_group" "myapp-sg" {
   name = "${var.env_prefix}-sg"
@@ -96,10 +67,7 @@ data "aws_ami" "latest_amazon_linux" {
   owners = ["137112412989"] # Amazon
   
 }
-output "aws_ami_id" {
-  value = data.aws_ami.latest_amazon_linux.id
-  
-}
+
 
 /*resource "aws_key_pair" "ssh" {
   key_name   = "dev-key"
@@ -110,8 +78,9 @@ output "aws_ami_id" {
 
 resource "aws_instance" "myapp-server" {
   ami           = data.aws_ami.latest_amazon_linux.id
-  instance_type = "t3.micro"
-  subnet_id     = aws_subnet.myapp-subnet-1.id
+  instance_type = var.instance_type
+
+  subnet_id     = module.myapp-subnet.subnet.id
   security_groups = [aws_security_group.myapp-sg.id]
   availability_zone = var.avail_zone
 
