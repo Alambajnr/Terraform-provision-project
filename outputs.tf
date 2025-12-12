@@ -1,8 +1,8 @@
-output "aws_ami_id" {
-  value = data.aws_ami.latest_amazon_linux.id
-  
+
+output "webserver_sg_id" {
+  value = module.myapp-webserver.security_group_id
 }
 
-output "ec2-public_ip" {
-  value = aws_instance.myapp-server.public_ip
+output "webserver_public_ip" {
+  value = module.myapp-webserver.public_ip
 }
