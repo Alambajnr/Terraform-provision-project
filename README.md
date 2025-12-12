@@ -109,6 +109,49 @@ The purpose is to provide a lightweight, reproducible environment for deploying 
    - Public IP (use to access Nginx on port 8080)
 
 ---
+## Screenshots
+
+### EC2 Instance Running
+Shows the EC2 instance named `dev-server` in the AWS Console, confirming it's in the `running` state with type `t3.micro`.
+
+![EC2 Instance Running](./docs/images/ec2-instance.png)
+
+---
+
+### VPC Overview
+Displays the `dev-vpc` with CIDR block `10.0.0.0/16`, confirming it's available and properly configured.
+
+![VPC Overview](./docs/images/vpc-overview.png)
+
+---
+
+### Internet Gateway Attached
+Shows the `dev-igw` Internet Gateway successfully attached to the VPC, enabling outbound traffic.
+
+![Internet Gateway Attached](./docs/images/internet-gateway.png)
+
+---
+
+### Subnet Configuration
+Displays the `dev-subnet-1` with CIDR `10.0.10.0/24`, confirming it's available and linked to the correct VPC.
+
+![Subnet Configuration](./docs/images/subnet.png)
+
+---
+
+### Route Table Association
+Shows the `dev-route-table` associated with the subnet, routing traffic to the Internet Gateway.
+
+![Route Table Association](./docs/images/route-table.png)
+
+---
+
+### Nginx Welcome Page
+Confirms the webserver is running and accessible via public IP on port 8080.
+
+![Nginx Welcome Page](./docs/images/nginx.png)
+
+---
 
 ## Operations Guide
 - **Monitoring:** Use AWS CloudWatch for EC2 metrics (CPU, memory, network). Enable logging for Docker/Nginx.
